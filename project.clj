@@ -6,6 +6,7 @@
                                org.clojure/google-closure-library-third-party]]
                  [thheller/shadow-cljs "2.11.7"]
                  [com.taoensso/timbre "5.1.0"]
+                 [clj-time "0.15.2"]
                  [reagent "1.0.0"]
                  [clj-commons/secretary "1.2.4"]
                  [liberator "0.15.3"]
