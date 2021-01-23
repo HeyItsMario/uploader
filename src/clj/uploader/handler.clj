@@ -4,6 +4,7 @@
     [compojure.route :refer [resources not-found]]
     [ring.adapter.jetty :refer [run-jetty]]
     [ring.util.response :refer [resource-response]]
+    [ring.middleware.params :refer [wrap-params]]
     [taoensso.timbre :refer [info  warn  error  fatal set-level!]]
     [uploader.routes.records :refer [record-routes]]
     ))
@@ -14,8 +15,9 @@
   (info "starting up..."))
 
 (def app
-  (apply routes [record-routes
-                 (not-found "Page not found")]))
+  (->> (apply routes [record-routes
+                      (not-found "Page not found")])
+       (wrap-params)))
 
 (defn start-server [& args]
   (run-jetty app {:port 8080 :join? false}))
