@@ -1,6 +1,16 @@
 (ns uploader.entities.record
-  (:require [clojure.string :as str]
+  (:require [clj-time.core :as t]
+            [clj-time.coerce :as tc]
+            [clj-time.format :as tf]
+            [clojure.string :as str]
+            [uploader.datastore.db :refer [get-entities reset-db!]]
             [uploader.datastore.db :refer [save-entity!]]))
+
+
+;; NOTE: Functions below for uploading records, eg. normalizing data, transformations, etc.
+
+(def multi-parser
+  (tf/formatter (t/default-time-zone) "YYYY/MM/dd"  "YYYY-MM-dd" "MM/dd/YYYY" "MM-dd-YYYY"))
 
 (defn delimiter-type [record-str]
   (let [chars (set record-str)]
@@ -26,9 +36,21 @@
   [records]
   (filter (comp (partial = 5) count) records))
 
+(defn transform
+  "Takes in a record and applies transformations."
+  [record]
+  (-> record
+      (update :birthdate #(tf/parse multi-parser %))
+      (update :first-name str/capitalize)
+      (update :last-name str/capitalize)
+      (update :gender str/capitalize)
+      (update :favorite-color str/capitalize)
+      ))
+
 (defn create-record [data]
   (->> (map (comp vec list) [:last-name :first-name :gender :favorite-color :birthdate] data)
-       (into {})))
+       (into {})
+       (transform)))
 
 (defn create-record-entity [record]
   {:type :records
@@ -39,10 +61,25 @@
    Returns a list of UUID's corresponding to each record's ID in the DB."
   [records]
   (let [normalized-records (map (comp normalize-values split-record-entry str/trim) records)]
-    (->> normalized-records
-         (filter-invalid-records)
-         (map (comp save-entity! create-record-entity create-record)))))
+    (doall (->> normalized-records
+                (filter-invalid-records)
+                (map (comp save-entity! create-record-entity create-record))))))
 
 (defn upload-record! [])
 
+
+;; NOTE: Functions below for working with records.
+
+(defn sort-records
+  ([f]
+   (sort-by f (vals (get-entities :records))))
+  ([f c]
+   (sort-by f c (vals (get-entities :records)))))
+
+(defn sorted-records [sort-type]
+  (case sort-type
+    :birthdate (sort-records :birthdate)
+    :last-name (sort-records :last-name #(compare %2 %1))
+    :gender    (sort-records (juxt :gender :last-name))
+    (vals (get-entities :records))))
 
