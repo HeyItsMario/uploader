@@ -32,3 +32,14 @@
         (doseq [t [:gender :birthdate :last-name]]
           (print "Table sorted by " (name t))
           (sorted-output t)))))
+
+
+(comment
+
+  ;; 
+  (doseq [fp ["./commas.txt" "./spaces.txt" "./pipes.txt"]]
+    (parse-file fp)
+    )
+
+
+  )

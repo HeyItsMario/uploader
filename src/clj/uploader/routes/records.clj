@@ -1,27 +1,31 @@
 (ns uploader.routes.records
-  (:require [compojure.core :refer [ANY context routes]]
+  (:require [cheshire.core :refer [encode]]
+            [compojure.core :refer [ANY context routes]]
             [liberator.representation :refer [ring-response]]
             [liberator.core :refer [defresource]]
             [taoensso.timbre :refer [info  warn  error  fatal set-level!]]
+            [uploader.datastore.db :refer [get-entities save-entity!]]
+            [uploader.entities.record :refer [sorted-records]]
+            [uploader.parser.file-parser :refer [format-values]]
             ))
 
 
-(defn sorted-records [sort-type]
+(defn get-sorted-records [sort-type]
   (case sort-type
-    :gender "gender"
-    :dob "dob"
-    :name "name"
-    "unknown"))
+    "/gender"    (sorted-records :gender)
+    "/birthdate" (sorted-records :birthdate)
+    "/name"      (sorted-records :last-name)
+    (sorted-records :unkown)))
 
 
-(defresource records [sort-type]
+(defresource records 
   :post! (fn [_])
   :handle-ok (fn [ctx]
-               (info {:event "get-sorted-records"
-                      :type sort-type})
-               (let [records (sorted-records sort-type)]
-                 (ring-response {:body records})))
+               (let [sort-type (-> ctx :request :path-info)
+                     records   (get-sorted-records sort-type)]
+                 (ring-response {:body (encode (map format-values records))})))
   :handle-exception (fn [ctx]
+                      (println "BAD ERROR")
                       (println (.getMessage (:exception ctx))))
   :available-media-types ["application/json"]
   :allowed-methods [:get :post])
@@ -30,7 +34,7 @@
 
 (def record-routes
   (context "/records" []
-           (ANY "/" [] (records nil))
-           (ANY "/gender" [] (records :gender))
-           (ANY "/birthdate" [] (records :dob))
-           (ANY "/name" [] (records :name))))
+           (ANY "/" [] records)
+           (ANY "/gender" [] records)
+           (ANY "/birthdate" [] records)
+           (ANY "/name" [] records)))
