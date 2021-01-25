@@ -36,7 +36,7 @@
 
 (comment
 
-  ;; 
+  ;; NOTE: Helper function to test the CLI file parser.
   (doseq [fp ["./commas.txt" "./spaces.txt" "./pipes.txt"]]
     (parse-file fp)
     )

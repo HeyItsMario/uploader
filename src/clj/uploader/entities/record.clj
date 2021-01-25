@@ -65,9 +65,6 @@
                 (filter-invalid-records)
                 (map (comp save-entity! create-record-entity create-record))))))
 
-(defn upload-record! [])
-
-
 ;; NOTE: Functions below for working with records.
 
 (defn sort-records

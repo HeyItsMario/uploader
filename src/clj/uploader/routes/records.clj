@@ -3,7 +3,6 @@
             [compojure.core :refer [ANY context routes]]
             [liberator.representation :refer [ring-response]]
             [liberator.core :refer [defresource]]
-            [taoensso.timbre :refer [info  warn  error  fatal set-level!]]
             [uploader.datastore.db :refer [reset-db! get-entities save-entity!]]
             [uploader.entities.record :refer [sorted-records upload-records!]]
             [uploader.parser.file-parser :refer [format-values]]
@@ -11,13 +10,15 @@
             [clojure.string :as str]))
 
 
-(defn get-sorted-records [sort-type]
+(defn get-sorted-records
+  "Takes in the file-path and retrieves sorted records based on the type.
+   If no file path matches, known ones, returns records without any sort."
+  [sort-type]
   (case sort-type
     "/gender"    (sorted-records :gender)
     "/birthdate" (sorted-records :birthdate)
     "/name"      (sorted-records :last-name)
     (sorted-records :unkown)))
-
 
 
 (defn upload-json-record [{:keys [first-name last-name gender favorite-color birthdate]}]
@@ -55,7 +56,6 @@
                                                                  "Could not upload your entry. Please make sure you are uploading in the correct format.")})})
                       ))
   :processable? (fn [ctx]
-                  (println "checking media type")
                   (record-processable? (-> ctx :request :content-type)))
 
   :handle-unprocessable-entity (fn [ctx]
