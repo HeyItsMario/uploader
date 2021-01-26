@@ -34,7 +34,11 @@
 (defn filter-invalid-records
   "Takes a collection of records and filters out any with less than 5 parts"
   [records]
-  (filter (comp (partial = 5) count) records))
+  (let [missing-data? (fn [r] (not (= 5 (count r))))
+        invalid-genders? (fn [r] (let [[_ _ s _ _] (vec r)]
+                                  (not (or (= s "MALE") (= s "FEMALE")))))]
+    (remove #(or (missing-data? %)
+                 (invalid-genders? %)) records)))
 
 (defn transform
   "Takes in a record and applies transformations."
