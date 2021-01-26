@@ -56,7 +56,9 @@
                                                                  "Could not upload your entry. Please make sure you are uploading in the correct format.")})})
                       ))
   :processable? (fn [ctx]
-                  (record-processable? (-> ctx :request :content-type)))
+                  (case (-> ctx :request :request-method)
+                    :post (record-processable? (-> ctx :request :content-type))
+                    true))
 
   :handle-unprocessable-entity (fn [ctx]
                                  (ring-response {:body

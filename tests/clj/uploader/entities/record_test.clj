@@ -19,6 +19,16 @@
    '("SMITH" "JANE" "CIRCLE" "BLUE" "01-01-1970") ;; Invalid gender.
    ])
 
+(def sample-records
+  ["Smith jane female violet 01-06-1930"
+   "uncle|sam | male| purple |01-06-1980"
+   "wonderland,alice,female,blue,01-03-1945"
+   "Smith joe male blue 01-06-1950"
+   "enaj jane female pink 01-06-1945"
+   "public joe male red 01-06-1970"
+   ]
+  )
+
 (deftest delimiter-type-test
   (is (and (= "\\|" (er/delimiter-type pipe-example))
            (= "," (er/delimiter-type comma-example))
@@ -60,7 +70,51 @@
 (deftest upload-records-tests
   (let [ids (er/upload-records! [pipe-example space-example comma-example])]
     (is (and (= 3 (count ids))
-             (= 36 (count (first ids)))))))
+             (= 36 (count (first ids))))))
+
+  ;; teardown db
+  (reset-db!)
+
+  )
+
+
+(deftest sorted-records-test
+  (let [ids            (er/upload-records! sample-records)
+        bday-records   (vec (er/sorted-records :birthdate))
+        gender-records (vec (er/sorted-records :gender))
+        name-records   (vec (er/sorted-records :last-name))
+        ]
+
+    ;; Testing bday-order
+    (is (and (and (= (:last-name (get bday-records 5)) "Uncle")
+                  (= (:last-name (get bday-records 4)) "Public")
+                  (= (:last-name (get bday-records 3)) "Smith")
+                  (= (:last-name (get bday-records 2)) "Enaj")
+                  (= (:last-name (get bday-records 1)) "Wonderland")
+                  (= (:last-name (get bday-records 0)) "Smith"))
+
+             ;; Testing gender order
+             (and (= (:last-name (get gender-records 5)) "Uncle")
+                  (= (:last-name (get gender-records 4)) "Smith")
+                  (= (:last-name (get gender-records 3)) "Public")
+                  (= (:last-name (get gender-records 2)) "Wonderland")
+                  (= (:last-name (get gender-records 1)) "Smith")
+                  (= (:last-name (get gender-records 0)) "Enaj"))
+
+             ;; Testing name order
+             (and (= (:last-name (get name-records 5)) "Enaj")
+                  (= (:last-name (get name-records 4)) "Public")
+                  (= (:last-name (get name-records 3)) "Smith")
+                  (= (:last-name (get name-records 2)) "Smith")
+                  (= (:last-name (get name-records 1)) "Uncle")
+                  (= (:last-name (get name-records 0)) "Wonderland"))
+             ))
+
+    )
+
+  ;; teardown db
+  (reset-db!)
+  )
 
 
 (comment
@@ -72,11 +126,14 @@
 
   (er/upload-records! [pipe-example space-example comma-example])
 
+  (er/upload-records! sample-records)
+
   (view-db)
 
   (reset-db!)
 
   (run-tests)
+
 
 
   )

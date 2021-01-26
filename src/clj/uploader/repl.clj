@@ -18,7 +18,7 @@
           (run-jetty (handler) {:port 8080
                                 :open-browser? false
                                 :join? false}))
-  (println "You can view this on http://localhost:8080"))
+  (println "Listening on port 8080"))
 
 (defn stop! []
   (println "Shutting down...")
