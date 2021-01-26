@@ -49,6 +49,10 @@
   :handle-created (fn [ctx]
                     (let [id       (::uuid ctx)
                           success? (not (nil? id))]
+                      (if success?
+                        (println "Successfully uploading a record.")
+                        (println "Error uploading a record.")
+                        )
                       (ring-response {:body (encode {:success? success?
                                                      :id       (if success? id 0)
                                                      :error    (if success?
