@@ -1,0 +1,8 @@
+lname fname male color 1900-01-06
+
+MAX Wax FEMALE  blue 1996-02-22
+turtle neck   m Red 01/02/1902
+funny O'melvany Male purple 07-27-1998
+
+
+public jane famle yellow 7/27/1967

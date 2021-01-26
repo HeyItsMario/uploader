@@ -1,0 +1,6 @@
+smith, joe, male, indigo, 09-09-1988
+Otta, Shape,male, red 06-07-1978
+
+fly,fire,female,black,2001-01-11
+ news, yesterday,female,blue, 1994-02-06
+

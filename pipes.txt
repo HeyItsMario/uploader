@@ -1,0 +1,7 @@
+  Smith | Betty | female |BLUE | 1-6-1993
+worries|no| male| Red  | 07/27/1967
+pizza | P'roni| FEMALE   | purple | 1990/05/30
+
+
+
+smith | O'smith | male | 1990-09-29
