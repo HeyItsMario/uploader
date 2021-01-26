@@ -26,12 +26,14 @@
 (defn -main [& args]
   (if (not (files-exists? args))
     (println "Invalid file paths. Make sure you are typing the correct file path. Exiting...")
-    (do (println "Uploading..")
-        (doseq [fp args]
-          (parse-file fp))
-        (doseq [t [:gender :birthdate :last-name]]
-          (print "Table sorted by " (name t))
-          (sorted-output t)))))
+    (if (zero? (count args))
+      (println "No filepaths provided. Exiting...")
+      (do (println "Uploading..")
+          (doseq [fp args]
+            (parse-file fp))
+          (doseq [t [:gender :birthdate :last-name]]
+            (print "Table sorted by " (name t))
+            (sorted-output t))))))
 
 
 (comment

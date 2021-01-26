@@ -16,6 +16,8 @@
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
+  :main uploader.handler/start-server
+
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "1.0.2"]]

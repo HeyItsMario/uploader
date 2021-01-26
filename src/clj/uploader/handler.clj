@@ -15,4 +15,5 @@
        (wrap-params)))
 
 (defn start-server [& args]
-  (run-jetty app {:port 8080 :join? false}))
+  (run-jetty app {:port 8080 :join? false})
+  (println "listening on port :8080"))
