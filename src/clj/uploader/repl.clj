@@ -2,7 +2,7 @@
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.file-info :refer [wrap-file-info]]
-            [uploader.handler :refer [app init]]))
+            [uploader.handler :refer [app]]))
 
 (defonce server (atom nil))
 

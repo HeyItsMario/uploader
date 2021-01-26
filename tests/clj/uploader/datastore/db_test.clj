@@ -22,14 +22,36 @@
   (let [record (create-record)
         entity {:type :records :data record}
         id     (db/save-entity! entity)]
-    (is (= record  (db/get-record-by-id id)))))
+    (is (= record  (db/get-record-by-id id))))
 
+  ;; Teardown db.
+  (db/reset-db!)
+  )
+
+(deftest view-db-test
+  (is (= true (not (nil? (db/view-db))))))
+
+(deftest get-entities-test
+  ;; NOTE: creating and save ten records
+  (doseq [_ (range 10)]
+    (db/save-entity! {:type :records :data (create-record)}))
+
+  ;; NOTE: `(db/get-entities :records)` should have 10 elements, uuid=>record map entries.
+  ;;       All record entries should be map types.
+  (is (and (= 10 (count (db/get-entities :records)))
+           (every? true? (map map? (vals (db/get-entities :records))))))
+
+  ;; Teardown db.
+  (db/reset-db!)
+  )
 
 (comment
 
   (db/view-db)
 
   (db/reset-db!)
+
+  (db/get-entities :records)
 
   (run-tests)
 
