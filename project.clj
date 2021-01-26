@@ -24,8 +24,8 @@
    :prod {}
    :uberjar {:source-paths ["env/prod/clj"]
              :omit-source  true
-             :main         uploader.server
-             :aot          [uploader.server]
+             :main         uploader.handler
+             :aot          [uploader.handler]
              :uberjar-name "uploader.jar"
              :prep-tasks   ["compile" ["release"]]}}
 
